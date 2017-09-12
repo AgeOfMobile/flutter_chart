@@ -1,0 +1,14 @@
+name: flutter_chart
+description: A simple chart library for Flutter
+version: 0.0.1
+author: Tri Bui
+homepage: http://github.com/AgeOfMobile/flutter_chart
+
+#flutter:
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  test: ^0.12.0
