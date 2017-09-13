@@ -1,7 +1,7 @@
-import 'dart:ui';
 import 'dart:math';
+import 'dart:ui';
+
 import 'package:flutter/animation.dart';
-import 'package:flutter/painting.dart' as painting;
 import 'package:flutter/rendering.dart' as rendering;
 import 'package:flutter_chart/chart/chart.dart';
 import 'package:flutter_chart/data/chartdata.dart';
@@ -12,13 +12,17 @@ import 'package:meta/meta.dart';
 class DonutChartData extends ChartData {
   DonutChartData({
     @required List<DataSet> dataSets,
-    this.colors
+    this.colors,
+    this.arcWidth: 50.0,
+    this.arcWidthStep: 5.0,
   }):
     assert(dataSets != null && dataSets.length == 1),
     assert(colors == null || (colors.length == dataSets[0].data.length)),
     super(dataSets: dataSets);
 
   final List<Color> colors;
+  final double arcWidth;
+  final double arcWidthStep;
 }
 
 class DonutChart extends Chart<DonutChartData> {
@@ -32,6 +36,17 @@ class DonutChart extends Chart<DonutChartData> {
 }
 
 class DonutChartPainter extends ChartPainter<DonutChartData> {
+  static const START = -0.5 * PI;
+
+  Color _darkerColor(Color color, int amt) {
+    int col = color.value;
+    return new Color(
+        ((col & 0x0000FF) + amt) |
+        ((((col >> 8) & 0x00FF) + amt) << 8) |
+        (((col >> 16) + amt) << 16)
+    );
+  }
+
   DonutChartPainter(
       {@required DonutChartData data, @required Animation<double> animation})
       : super(data: data, animation: animation);
@@ -39,35 +54,56 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = new Paint()
-      ..color = this.data.backgroundColor
-      ..strokeWidth = 30.0
+      ..strokeWidth = 1.0
       ..strokeCap = StrokeCap.butt
-      ..style = PaintingStyle.stroke;
+      ..style = PaintingStyle.fill;
 
-    var startAngle = 1.5 * PI;
+    var startAngle = START;
     List<Entry> entries = this.data.dataSets[0].data;
-    entries.sort((e1, e2) => e2.value.compareTo(e1.value));
     double sum = entries.reduce((e1, e2) => new Entry(e1.value + e2.value)).value;
     List<double> values = entries.map((entry) => entry.value / sum).toList();
     var index = 0;
 
-    double radius = min(size.width, size.height) - paint.strokeWidth;
-    Rect rect = new Rect.fromLTWH(
-        (size.width - radius) / 2,
-        (size.height - radius) / 2,
-        radius,
-        radius);
+    double radius = min(size.width, size.height) - this.data.arcWidth;
 
     values.forEach((value) {
+      Path path = new Path();
       double sweepAngle = value * 2 * PI;
       paint.color = this.data.colors[index];
-      paint.strokeWidth = paint.strokeWidth - 5;
-//      painting.HSVColor color = new painting.HSVColor.fromColor(this.data.colors[index]);
-//      paint.shader = new Gradient.linear(new Offset(0.0, 0.0), new Offset(0.5, 0.5), <Color>[
-//        this.data.colors[index],
-//        const Color(0xFFFFFFFF)
-//      ]);
-      canvas.drawArc(rect, startAngle, animation.value * sweepAngle, false, paint);
+
+      Rect rect = new Rect.fromLTWH(
+          (size.width - radius) / 2,
+          (size.height - radius) / 2,
+          radius,
+          radius);
+
+      paint.shader = new Gradient.linear(new Offset(0.0, 0.0), new Offset(size.width, size.height),
+          <Color>[
+          _darkerColor(this.data.colors[index], -50),
+          this.data.colors[index],
+        ]
+      );
+      double start = START + animation.value * (startAngle - START);
+      double sweep = animation.value * sweepAngle;
+
+      path.arcTo(rect, start, sweep, true);
+
+      double outerRadius = radius + (this.data.arcWidth - index * this.data.arcWidthStep);
+      rect = new Rect.fromLTWH(
+          (size.width - outerRadius) / 2,
+          (size.height - outerRadius) / 2,
+          outerRadius,
+          outerRadius);
+      path.arcTo(rect, start + sweep, - sweep, false);
+      path.close();
+
+      rect = new Rect.fromLTWH(
+          (size.width - radius) / 2,
+          (size.height - radius) / 2,
+          radius,
+          radius);
+
+      canvas.drawPath(path, paint);
       startAngle += sweepAngle;
       index += 1;
     });

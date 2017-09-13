@@ -34,8 +34,8 @@ class MyApp extends StatelessWidget {
                 ),
               ],
               lineColors: <Color>[
-                new Color(0xFFFF22FF),
-                new Color(0xFF0000FF),
+                const Color(0xFFFF22FF),
+                const Color(0xFF00FFFF),
               ],
             ),
           ),
@@ -50,18 +50,18 @@ class MyApp extends StatelessWidget {
                   new DataSet(
                     label: "Data Set 1",
                     data: <Entry>[
-                      new Entry(10.0),
-                      new Entry(20.0),
-                      new Entry(40.0),
-                      new Entry(30.0)
+                      new Entry(25.0),
+                      new Entry(12.5),
+                      new Entry(12.5),
+                      new Entry(50.0)
                     ],
                   ),
                 ],
                 colors: <Color>[
-                  new Color(0xFFFF0000),
-                  new Color(0xFF00FF00),
-                  new Color(0xFF0000FF),
-                  new Color(0xFFFFFFFF),
+                  const Color(0xFFFF8540),
+                  const Color(0xFFB269EE),
+                  const Color(0xFF4AD8CF),
+                  const Color(0xFFBDBCC8),
                 ],
               ),
             ),
