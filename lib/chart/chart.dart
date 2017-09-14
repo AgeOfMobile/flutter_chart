@@ -1,11 +1,12 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chart/data/chartdata.dart';
+import 'package:flutter_chart/data/chart_data.dart';
 import 'package:meta/meta.dart';
 
 abstract class Chart<T extends ChartData> extends StatefulWidget {
-  Chart({ @required this.data });
+  Chart({ @required this.data, this.animationDuration: const Duration(milliseconds: 500) });
 
   final T data;
+  final Duration animationDuration;
 
   ChartPainter<T> createChartPainter(T data, Animation<double> animation);
 
@@ -25,7 +26,7 @@ class _ChartState extends State<Chart> with TickerProviderStateMixin {
     _controller = new AnimationController(
       value: 0.0,
       vsync: this,
-      duration: const Duration(seconds: 1),
+      duration: this.widget.animationDuration,
     )
     ..forward();
   }

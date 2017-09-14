@@ -1,7 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chart/chart/chart.dart';
 import 'package:flutter_chart/chart/line/line_chart_data.dart';
-import 'package:flutter_chart/data/dataset.dart';
+import 'package:flutter_chart/data/data_set.dart';
 import 'package:flutter_chart/util/utils.dart';
 import 'package:meta/meta.dart';
 

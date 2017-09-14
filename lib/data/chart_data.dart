@@ -1,6 +1,6 @@
 import 'package:flutter/painting.dart';
 import 'package:meta/meta.dart';
-import 'package:flutter_chart/data/dataset.dart';
+import 'package:flutter_chart/data/data_set.dart';
 
 class ChartData {
   ChartData({

@@ -1,6 +1,6 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chart/data/chartdata.dart';
-import 'package:flutter_chart/data/dataset.dart';
+import 'package:flutter_chart/data/chart_data.dart';
+import 'package:flutter_chart/data/data_set.dart';
 import 'package:meta/meta.dart';
 
 class LineChartData extends ChartData {

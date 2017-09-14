@@ -4,8 +4,8 @@ import 'dart:ui';
 import 'package:flutter/animation.dart';
 import 'package:flutter/rendering.dart' as rendering;
 import 'package:flutter_chart/chart/chart.dart';
-import 'package:flutter_chart/data/chartdata.dart';
-import 'package:flutter_chart/data/dataset.dart';
+import 'package:flutter_chart/data/chart_data.dart';
+import 'package:flutter_chart/data/data_set.dart';
 import 'package:flutter_chart/data/entry.dart';
 import 'package:meta/meta.dart';
 
@@ -36,14 +36,14 @@ class DonutChart extends Chart<DonutChartData> {
 }
 
 class DonutChartPainter extends ChartPainter<DonutChartData> {
-  static const START = -0.5 * PI;
+  static const startAtAngle = -0.5 * PI;
 
-  Color _darkerColor(Color color, int amt) {
+  Color _darkerColor(Color color, int amount) {
     int col = color.value;
     return new Color(
-        ((col & 0x0000FF) + amt) |
-        ((((col >> 8) & 0x00FF) + amt) << 8) |
-        (((col >> 16) + amt) << 16)
+        ((col & 0x0000FF) + amount) |
+        ((((col >> 8) & 0x00FF) + amount) << 8) |
+        (((col >> 16) + amount) << 16)
     );
   }
 
@@ -54,18 +54,16 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
   @override
   void paint(Canvas canvas, Size size) {
     Paint paint = new Paint()
-      ..strokeWidth = 1.0
-      ..strokeCap = StrokeCap.butt
       ..style = PaintingStyle.fill;
 
-    var startAngle = START;
+    var startAngle = startAtAngle;
     List<Entry> entries = this.data.dataSets[0].data;
     double sum = entries.reduce((e1, e2) => new Entry(e1.value + e2.value)).value;
     List<double> values = entries.map((entry) => entry.value / sum).toList();
-    var index = 0;
 
     double radius = min(size.width, size.height) - this.data.arcWidth;
 
+    var index = 0;
     values.forEach((value) {
       Path path = new Path();
       double sweepAngle = value * 2 * PI;
@@ -83,9 +81,9 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
           this.data.colors[index],
         ]
       );
-      double start = START + animation.value * (startAngle - START);
-      double sweep = animation.value * sweepAngle;
 
+      double start = startAtAngle + animation.value * (startAngle - startAtAngle);
+      double sweep = animation.value * sweepAngle;
       path.arcTo(rect, start, sweep, true);
 
       double outerRadius = radius + (this.data.arcWidth - index * this.data.arcWidthStep);
@@ -95,15 +93,12 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
           outerRadius,
           outerRadius);
       path.arcTo(rect, start + sweep, - sweep, false);
+
+      // close the path to make a donut sector
       path.close();
 
-      rect = new Rect.fromLTWH(
-          (size.width - radius) / 2,
-          (size.height - radius) / 2,
-          radius,
-          radius);
-
       canvas.drawPath(path, paint);
+
       startAngle += sweepAngle;
       index += 1;
     });
