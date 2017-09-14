@@ -57,16 +57,37 @@ class MyApp extends StatelessWidget {
               child: new Container(
                 width: 350.0,
                 height: 200.0,
-                child: new DonutChart(
-                  data: new DonutChartData(
+//                child: new DonutChart(
+//                  data: new DonutChartData(
+//                    dataSets: <DataSet>[
+//                      new DataSet(
+//                        label: "Data Set 1",
+//                        data: <Entry>[
+//                          new Entry(25.0),
+//                          new Entry(12.5),
+//                          new Entry(12.5),
+//                          new Entry(50.0)
+//                        ],
+//                      ),
+//                    ],
+//                    colors: <Color>[
+//                      const Color(0xFFFF8540),
+//                      const Color(0xFFB269EE),
+//                      const Color(0xFF4AD8CF),
+//                      const Color(0xFFBDBCC8),
+//                    ],
+//                  ),
+//                ),
+                child: new PieChart(
+                  data: new PieChartData(
                     dataSets: <DataSet>[
                       new DataSet(
                         label: "Data Set 1",
                         data: <Entry>[
                           new Entry(25.0),
                           new Entry(12.5),
-                          new Entry(12.5),
-                          new Entry(50.0)
+                          new Entry(22.5),
+                          new Entry(40.0)
                         ],
                       ),
                     ],

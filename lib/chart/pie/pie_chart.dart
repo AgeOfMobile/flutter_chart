@@ -9,33 +9,31 @@ import 'package:flutter_chart/data/data_set.dart';
 import 'package:flutter_chart/data/entry.dart';
 import 'package:meta/meta.dart';
 
-class DonutChartData extends ChartData {
-  DonutChartData({
+class PieChartData extends ChartData {
+  PieChartData({
     @required List<DataSet> dataSets,
     this.colors,
-    this.arcWidth: 50.0,
-    this.arcWidthStep: 5.0,
+    this.arcWidthStep: 0.0,
   }):
     assert(dataSets != null && dataSets.length == 1),
     assert(colors == null || (colors.length == dataSets[0].data.length)),
     super(dataSets: dataSets);
 
   final List<Color> colors;
-  final double arcWidth;
   final double arcWidthStep;
 }
 
-class DonutChart extends Chart<DonutChartData> {
-  DonutChart({ @required DonutChartData data }): super(data: data);
+class PieChart extends Chart<PieChartData> {
+  PieChart({ @required PieChartData data }): super(data: data);
 
   @override
-  ChartPainter<DonutChartData> createChartPainter(
-      DonutChartData data, Animation<double> animation) {
-    return new DonutChartPainter(data: data, animation: animation);
+  ChartPainter<PieChartData> createChartPainter(
+      PieChartData data, Animation<double> animation) {
+    return new PieChartPainter(data: data, animation: animation);
   }
 }
 
-class DonutChartPainter extends ChartPainter<DonutChartData> {
+class PieChartPainter extends ChartPainter<PieChartData> {
   static const startAtAngle = -0.5 * PI;
 
   Color _darkerColor(Color color, int amount) {
@@ -47,8 +45,8 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
     );
   }
 
-  DonutChartPainter(
-      {@required DonutChartData data, @required Animation<double> animation})
+  PieChartPainter(
+      {@required PieChartData data, @required Animation<double> animation})
       : super(data: data, animation: animation);
 
   @override
@@ -61,37 +59,30 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
     double sum = entries.reduce((e1, e2) => new Entry(e1.value + e2.value)).value;
     List<double> values = entries.map((entry) => entry.value / sum).toList();
 
-    double radius = min(size.width, size.height) - this.data.arcWidth;
-
     var index = 0;
     values.forEach((value) {
       Path path = new Path();
       double sweepAngle = value * 2 * PI;
       paint.color = this.data.colors[index];
-      paint.shader = new Gradient.linear(new Offset(0.0, 0.0), new Offset(size.width, size.height),
+      paint.shader = new Gradient.linear(new Offset(0.0, 0.0),
+          new Offset(size.width, size.height),
           <Color>[
           _darkerColor(this.data.colors[index], -50),
           this.data.colors[index],
         ]
       );
 
+      path.moveTo(size.width / 2, size.height / 2);
+
+      double radius = min(size.width, size.height) - index * this.data.arcWidthStep;
+      double start = startAtAngle + animation.value * (startAngle - startAtAngle);
+      double sweep = animation.value * sweepAngle;
       Rect rect = new Rect.fromLTWH(
           (size.width - radius) / 2,
           (size.height - radius) / 2,
           radius,
           radius);
-
-      double start = startAtAngle + animation.value * (startAngle - startAtAngle);
-      double sweep = animation.value * sweepAngle;
-      path.arcTo(rect, start, sweep, true);
-
-      double outerRadius = radius + (this.data.arcWidth - index * this.data.arcWidthStep);
-      rect = new Rect.fromLTWH(
-          (size.width - outerRadius) / 2,
-          (size.height - outerRadius) / 2,
-          outerRadius,
-          outerRadius);
-      path.arcTo(rect, start + sweep, - sweep, false);
+      path.arcTo(rect, start, sweep, false);
 
       // close the path to make a donut sector
       path.close();
