@@ -7,18 +7,20 @@ import 'package:flutter_chart/chart/chart.dart';
 import 'package:flutter_chart/data/chart_data.dart';
 import 'package:flutter_chart/data/data_set.dart';
 import 'package:flutter_chart/data/entry.dart';
+import 'package:flutter_chart/scale/scale.dart';
 import 'package:meta/meta.dart';
 
 class DonutChartData extends ChartData {
   DonutChartData({
     @required List<DataSet> dataSets,
+    @required Map<String, Scale> scales,
     this.colors,
     this.arcWidth: 50.0,
     this.arcWidthStep: 5.0,
   }):
     assert(dataSets != null && dataSets.length == 1),
     assert(colors == null || (colors.length == dataSets[0].data.length)),
-    super(dataSets: dataSets);
+    super(dataSets: dataSets, scales: scales);
 
   final List<Color> colors;
   final double arcWidth;
