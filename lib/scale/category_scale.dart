@@ -5,10 +5,10 @@ class CategoryScale extends Scale<String> {
   CategoryScale({
     String name,
     this.values,
-    String min = "",
-    String max = ""
+    String domainMin = "",
+    String domainMax = ""
   })
-    : super(name: name, min: min, max: max);
+    : super(domainMin: domainMin, domainMax: domainMax);
 
   final List<String> values;
 

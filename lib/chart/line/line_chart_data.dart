@@ -17,7 +17,6 @@ class LineChartData extends ChartData {
     this.tension = 0.3,
     this.lineWidth = 0.5,
     this.dotColors,
-    this.gridLineColor: const Color(0xFF666666),
   }):
     assert(dataSets != null),
     assert(yScales != null),
@@ -42,7 +41,6 @@ class LineChartData extends ChartData {
   List<Color> dotColors;
 
   final double lineWidth;
-  final Color gridLineColor;
   final double tension;
   final Map<String, Scale> xScales;
 }

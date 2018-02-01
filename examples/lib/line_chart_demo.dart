@@ -14,11 +14,12 @@ class LineChartDemo extends StatelessWidget {
   Widget build(BuildContext context) {
     Random random = new Random();
 
-    final yScale = new LinearScale(name: "y", domainMin: 0.0, domainMax: 400.0);
+    final yScale1 = new LinearScale(domainMin: 0.0, domainMax: 120.0);
+    final yScale2 = new LinearScale(domainMin: 0.0, domainMax: 100.0);
     final xScale = new CategoryScale(name: "x",
       values: <String>["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]);
     final xAxis = new chart.CategoryAxis(scale: xScale);
-    final yAxis = new chart.LinearAxis(scale: yScale, tickCount: 10,
+    final yAxis = new chart.LinearAxis(scale: yScale1, tickCount: 12,
       gridLineColor: const Color(0xFFAAAAAA));
 
     return new Column(
@@ -42,13 +43,13 @@ class LineChartDemo extends StatelessWidget {
                   name: "dataSet1",
                   label: "Data Set 1",
                   data: new List<Entry>.generate(
-                    12, (i) => new Entry(random.nextInt(20) * 10.0)),
+                    2, (i) => new Entry(i * 10.0)),
                 ),
                 new DataSet(
                   name: "dataSet2",
                   label: "Data Set 2",
                   data: new List<Entry>.generate(
-                    12, (i) => new Entry(random.nextInt(20) * 10.0)),
+                    12, (i) => new Entry(random.nextInt(20) * 1.0)),
                 ),
               ],
               colors: <Color>[
@@ -65,8 +66,8 @@ class LineChartDemo extends StatelessWidget {
                 "dataSet2": xScale,
               },
               yScales: {
-                "dataSet1": yScale,
-                "dataSet2": yScale,
+                "dataSet1": yScale1,
+                "dataSet2": yScale2,
               },
               axes: <chart.Axis>[
                 xAxis,

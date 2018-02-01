@@ -3,12 +3,10 @@ import 'dart:ui';
 import 'package:meta/meta.dart';
 
 abstract class Scale<T> {
-  Scale({ @required this.name, this.min, this.max, this.ticks });
+  Scale({this.domainMin, this.domainMax });
 
-  final String name;
-  final T min;
-  final T max;
-  final List<T> ticks;
+  final T domainMin;
+  final T domainMax;
 
   double scale(T domainValue, int index, double range);
 }
