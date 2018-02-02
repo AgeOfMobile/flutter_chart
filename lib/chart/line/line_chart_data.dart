@@ -21,8 +21,8 @@ class LineChartData extends ChartData {
     assert(dataSets != null),
     assert(yScales != null),
     assert(xScales != null),
-    assert(colors == null || (colors.length == dataSets.length)),
-    assert(dotColors == null || (dotColors.length == dataSets.length)),
+    assert(colors == null || (colors.length >= dataSets.length)),
+    assert(dotColors == null || (dotColors.length >= dataSets.length)),
     super(
       dataSets: dataSets,
       scales: yScales,

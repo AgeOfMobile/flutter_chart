@@ -18,7 +18,7 @@ class PieChartData extends ChartData {
     this.arcWidthStep: 0.0,
   }):
     assert(dataSets != null && dataSets.length == 1),
-    assert(colors == null || (colors.length == dataSets[0].data.length)),
+    assert(colors == null || (colors.length >= dataSets[0].data.length)),
     super(dataSets: dataSets, scales: scales);
 
   final List<Color> colors;
