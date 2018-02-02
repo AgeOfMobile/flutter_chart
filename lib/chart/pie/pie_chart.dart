@@ -11,6 +11,8 @@ import 'package:flutter_chart/scale/scale.dart';
 import 'package:meta/meta.dart';
 
 class PieChartData extends ChartData {
+  static const startAtAngle = -0.5 * PI;
+
   PieChartData({
     @required List<DataSet> dataSets,
     @required Map<String, Scale> scales,
@@ -31,13 +33,11 @@ class PieChart extends Chart<PieChartData> {
   @override
   ChartPainter<PieChartData> createChartPainter(
       PieChartData data, Animation<double> animation) {
-    return new PieChartPainter(data: data, animation: animation);
+    return new _PieChartPainter(data: data, animation: animation);
   }
 }
 
-class PieChartPainter extends ChartPainter<PieChartData> {
-  static const startAtAngle = -0.5 * PI;
-
+class _PieChartPainter extends ChartPainter<PieChartData> {
   Color _darkerColor(Color color, int amount) {
     int col = color.value;
     return new Color(
@@ -47,16 +47,18 @@ class PieChartPainter extends ChartPainter<PieChartData> {
     );
   }
 
-  PieChartPainter(
+  _PieChartPainter(
       {@required PieChartData data, @required Animation<double> animation})
       : super(data: data, animation: animation);
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paintChart(Canvas canvas, Size size) {
+    this.data.axes.forEach((axis) => axis.draw(canvas, size));
+
     Paint paint = new Paint()
       ..style = PaintingStyle.fill;
 
-    var startAngle = startAtAngle;
+    var startAngle = PieChartData.startAtAngle;
     List<Entry> entries = this.data.dataSets[0].data;
     double sum = entries.reduce((e1, e2) => new Entry(e1.value + e2.value)).value;
     List<double> values = entries.map((entry) => entry.value / sum).toList();
@@ -77,7 +79,8 @@ class PieChartPainter extends ChartPainter<PieChartData> {
       path.moveTo(size.width / 2, size.height / 2);
 
       double radius = min(size.width, size.height) - index * this.data.arcWidthStep;
-      double start = startAtAngle + animation.value * (startAngle - startAtAngle);
+      double start = PieChartData.startAtAngle
+        + animation.value * (startAngle - PieChartData.startAtAngle);
       double sweep = animation.value * sweepAngle;
       Rect rect = new Rect.fromLTWH(
           (size.width - radius) / 2,

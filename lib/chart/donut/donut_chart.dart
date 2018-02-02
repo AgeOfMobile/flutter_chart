@@ -33,11 +33,11 @@ class DonutChart extends Chart<DonutChartData> {
   @override
   ChartPainter<DonutChartData> createChartPainter(
       DonutChartData data, Animation<double> animation) {
-    return new DonutChartPainter(data: data, animation: animation);
+    return new _DonutChartPainter(data: data, animation: animation);
   }
 }
 
-class DonutChartPainter extends ChartPainter<DonutChartData> {
+class _DonutChartPainter extends ChartPainter<DonutChartData> {
   static const startAtAngle = -0.5 * PI;
 
   Color _darkerColor(Color color, int amount) {
@@ -49,12 +49,14 @@ class DonutChartPainter extends ChartPainter<DonutChartData> {
     );
   }
 
-  DonutChartPainter(
+  _DonutChartPainter(
       {@required DonutChartData data, @required Animation<double> animation})
       : super(data: data, animation: animation);
 
   @override
-  void paint(Canvas canvas, Size size) {
+  void paintChart(Canvas canvas, Size size) {
+    this.data.axes.forEach((axis) => axis.draw(canvas, size));
+
     Paint paint = new Paint()
       ..style = PaintingStyle.fill;
 

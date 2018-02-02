@@ -18,21 +18,18 @@ class LineChart extends Chart<LineChartData> {
   @override
   ChartPainter<LineChartData> createChartPainter(LineChartData data,
       Animation<double> animation) {
-    return new LineChartPainter(data: data, animation: animation);
+    return new _LineChartPainter(data: data, animation: animation);
   }
 }
 
-class LineChartPainter extends ChartPainter<LineChartData> {
-  LineChartPainter({
+class _LineChartPainter extends ChartPainter<LineChartData> {
+  _LineChartPainter({
     @required LineChartData data,
     @required Animation<double> animation
   }): super(data: data, animation: animation);
 
   @override
-  void paint(Canvas canvas, Size size) {
-
-    this.data.axes.forEach((axis) => axis.draw(canvas, size));
-
+  void paintChart(Canvas canvas, Size size) {
     for (int i = 0; i < this.data.dataSets.length; i++) {
       final dataSet = this.data.dataSets[i];
 
@@ -61,7 +58,7 @@ class LineChartPainter extends ChartPainter<LineChartData> {
   @override
   bool shouldRepaint(CustomPainter oldDelegate) {
     return oldDelegate == null ||
-      (oldDelegate as LineChartPainter).animation.value != this.animation.value;
+      (oldDelegate as _LineChartPainter).animation.value != this.animation.value;
   }
 
   Scale _getScale(Map<String, Scale> scales, String name) {

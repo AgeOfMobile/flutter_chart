@@ -58,4 +58,13 @@ abstract class ChartPainter<T extends ChartData> extends CustomPainter {
 
   final T data;
   final Animation<double> animation;
+
+  void paintChart(Canvas canvas, Size size);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    this.data.axes.forEach((axis) => axis.draw(canvas, size));
+
+    paintChart(canvas, size);
+  }
 }
