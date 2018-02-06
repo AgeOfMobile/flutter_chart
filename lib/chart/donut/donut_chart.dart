@@ -57,6 +57,8 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
 
   @override
   void paintChart(Canvas canvas, Size size) {
+    if (this.data.dataSets[0].data.isEmpty) return;
+
     Paint paint = new Paint()
       ..style = PaintingStyle.fill;
 
