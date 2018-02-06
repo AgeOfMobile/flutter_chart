@@ -1,5 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chart/flutter_chart.dart';
+import 'package:flutter_chart/axis/axis.dart' as chart;
+
+class DonutChartAxis implements chart.Axis {
+  @override
+  void draw(Canvas canvas, Size size) {
+
+  }
+}
 
 class DonutChartDemo extends StatelessWidget {
   @override
@@ -26,9 +34,9 @@ class DonutChartDemo extends StatelessWidget {
                     label: "Data Set 1",
                     data: <Entry>[
                       new Entry(25.0),
-                      new Entry(12.5),
-                      new Entry(22.5),
-                      new Entry(40.0),
+//                      new Entry(12.5),
+//                      new Entry(22.5),
+//                      new Entry(40.0),
                     ],
                   ),
                 ],

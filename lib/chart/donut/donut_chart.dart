@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/animation.dart';
 import 'package:flutter/rendering.dart' as rendering;
+import 'package:flutter_chart/axis/axis.dart';
 import 'package:flutter_chart/chart/chart.dart';
 import 'package:flutter_chart/data/chart_data.dart';
 import 'package:flutter_chart/data/data_set.dart';
@@ -14,13 +15,14 @@ class DonutChartData extends ChartData {
   DonutChartData({
     @required List<DataSet> dataSets,
     @required Map<String, Scale> scales,
+    List<Axis> axes,
     this.colors,
     this.arcWidth: 50.0,
     this.arcWidthStep: 5.0,
   }):
     assert(dataSets != null && dataSets.length == 1),
     assert(colors == null || (colors.length >= dataSets[0].data.length)),
-    super(dataSets: dataSets, scales: scales);
+    super(dataSets: dataSets, scales: scales, axes: axes);
 
   final List<Color> colors;
   final double arcWidth;
@@ -55,8 +57,6 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
 
   @override
   void paintChart(Canvas canvas, Size size) {
-    this.data.axes.forEach((axis) => axis.draw(canvas, size));
-
     Paint paint = new Paint()
       ..style = PaintingStyle.fill;
 
@@ -69,7 +69,6 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
 
     var index = 0;
     values.forEach((value) {
-      Path path = new Path();
       double sweepAngle = value * 2 * PI;
       paint.color = this.data.colors[index];
       paint.shader = new Gradient.linear(new Offset(0.0, 0.0), new Offset(size.width, size.height),
@@ -87,15 +86,18 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
 
       double start = startAtAngle + animation.value * (startAngle - startAtAngle);
       double sweep = animation.value * sweepAngle;
-      path.arcTo(rect, start, sweep, true);
 
-      double outerRadius = radius + (this.data.arcWidth - index * this.data.arcWidthStep);
+      Path path = new Path();
+      _arcTo(path, rect, start, sweep, true);
+
+      double outerRadius = radius +
+        (this.data.arcWidth - index * this.data.arcWidthStep);
       rect = new Rect.fromLTWH(
-          (size.width - outerRadius) / 2,
-          (size.height - outerRadius) / 2,
-          outerRadius,
-          outerRadius);
-      path.arcTo(rect, start + sweep, - sweep, false);
+        (size.width - outerRadius) / 2,
+        (size.height - outerRadius) / 2,
+        outerRadius,
+        outerRadius);
+      _arcTo(path, rect, start + sweep, -sweep, false);
 
       // close the path to make a donut sector
       path.close();
@@ -110,5 +112,15 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
   @override
   bool shouldRepaint(rendering.CustomPainter oldDelegate) {
     return true;
+  }
+
+  // Skia (Flutter's drawing library) doesn't support sweepAngle >= 2 * PI so we need to split into 2 arcs
+  void _arcTo(Path path, Rect rect, double startAngle, double sweepAngle, bool forceMoveTo) {
+    if (sweepAngle == 2 * PI || sweepAngle == -2 * PI) {
+      path.arcTo(rect, startAngle, sweepAngle / 2, true);
+      path.arcTo(rect, startAngle + sweepAngle / 2, sweepAngle / 2, forceMoveTo);
+    } else {
+      path.arcTo(rect, startAngle, sweepAngle, forceMoveTo);
+    }
   }
 }
