@@ -17,14 +17,16 @@ class DonutChartData extends ChartData {
     @required Map<String, Scale> scales,
     List<Axis> axes,
     this.colors,
-    this.arcWidth: 50.0,
-    this.arcWidthStep: 5.0,
+    this.arcWidth = 50.0,
+    this.arcWidthStep = 5.0,
+    this.radius = 0.0,
   }):
     assert(dataSets != null && dataSets.length == 1),
     assert(colors == null || (colors.length >= dataSets[0].data.length)),
     super(dataSets: dataSets, scales: scales, axes: axes);
 
   final List<Color> colors;
+  final double radius;
   final double arcWidth;
   final double arcWidthStep;
 }
@@ -61,16 +63,22 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
 
     Paint paint = new Paint()
       ..style = PaintingStyle.fill;
-
-    var startAngle = startAtAngle;
     List<Entry> entries = this.data.dataSets[0].data;
     double sum = entries.reduce((e1, e2) => new Entry(e1.value + e2.value)).value;
     List<double> values = entries.map((entry) => entry.value / sum).toList();
 
-    double radius = min(size.width, size.height) - this.data.arcWidth;
-
+    double innerRadius =
+      this.data.radius != 0.0 ? this.data.radius :
+                                min(size.width, size.height) - this.data.arcWidth;
     var index = 0;
-    values.forEach((value) {
+
+    final Rect innerRect = new Rect.fromLTWH(
+      (size.width - innerRadius) / 2,
+      (size.height - innerRadius) / 2,
+      innerRadius,
+      innerRadius);
+
+    values.fold(startAtAngle, (startAngle, value) {
       double sweepAngle = value * 2 * PI;
       paint.color = this.data.colors[index];
       paint.shader = new Gradient.linear(new Offset(0.0, 0.0), new Offset(size.width, size.height),
@@ -80,34 +88,29 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
         ]
       );
 
-      Rect rect = new Rect.fromLTWH(
-          (size.width - radius) / 2,
-          (size.height - radius) / 2,
-          radius,
-          radius);
-
       double start = startAtAngle + animation.value * (startAngle - startAtAngle);
       double sweep = animation.value * sweepAngle;
 
       Path path = new Path();
-      _arcTo(path, rect, start, sweep, true);
+      _arcTo(path, innerRect, start, sweep, true);
 
-      double outerRadius = radius +
+      double outerRadius = innerRadius +
         (this.data.arcWidth - index * this.data.arcWidthStep);
-      rect = new Rect.fromLTWH(
+      Rect outerRect = new Rect.fromLTWH(
         (size.width - outerRadius) / 2,
         (size.height - outerRadius) / 2,
         outerRadius,
         outerRadius);
-      _arcTo(path, rect, start + sweep, -sweep, false);
+      _arcTo(path, outerRect, start + sweep, -sweep, false);
 
       // close the path to make a donut sector
       path.close();
 
       canvas.drawPath(path, paint);
 
-      startAngle += sweepAngle;
       index += 1;
+
+      return startAngle + sweepAngle;
     });
   }
 
