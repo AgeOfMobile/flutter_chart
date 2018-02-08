@@ -18,7 +18,7 @@ class LineChartDemo extends StatelessWidget {
     final yScale2 = new LinearScale(domainMin: 0.0, domainMax: 100.0);
     final xScale = new CategoryScale(name: "x",
       values: <String>["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]);
-    final xAxis = new chart.CategoryAxis(scale: xScale);
+    final xAxis = new chart.CategoryAxis(scale: xScale, color: Colors.black);
     final yAxis = new chart.LinearAxis(scale: yScale1, tickCount: 12,
       gridLineColor: const Color(0xFFAAAAAA));
 
@@ -52,6 +52,7 @@ class LineChartDemo extends StatelessWidget {
                     12, (i) => new Entry(random.nextInt(20) * 1.0)),
                 ),
               ],
+              padding: new EdgeInsets.only(left: 10.0, right: 10.0, bottom: 25.0),
               colors: <Color>[
                 Colors.blueAccent,
                 Colors.redAccent,

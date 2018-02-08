@@ -29,6 +29,17 @@ class _LineChartPainter extends ChartPainter<LineChartData> {
   }): super(data: data, animation: animation);
 
   @override
+  void paint(Canvas canvas, Size size) {
+    size = this.data.padding.deflateSize(size);
+    canvas.save();
+    canvas.translate(this.data.padding.left, this.data.padding.top);
+
+    super.paint(canvas, size);
+
+    canvas.restore();
+  }
+
+  @override
   void paintChart(Canvas canvas, Size size) {
     for (int i = 0; i < this.data.dataSets.length; i++) {
       final dataSet = this.data.dataSets[i];

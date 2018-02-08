@@ -3,12 +3,13 @@ import 'dart:ui';
 import 'package:flutter_chart/axis/axis.dart';
 import 'package:flutter_chart/scale/linear_scale.dart';
 
-class LinearAxis implements Axis {
+class LinearAxis extends Axis {
   LinearAxis({
+    AxisPosition position,
     this.scale,
     this.tickCount = 5,
     this.gridLineColor = const Color(0xFF000000)
-  });
+  }): super(position: position);
 
   final LinearScale scale;
   final int tickCount;

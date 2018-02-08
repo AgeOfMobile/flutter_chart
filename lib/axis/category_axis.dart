@@ -2,16 +2,23 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_chart/axis/axis.dart' as chart;
 import 'package:flutter_chart/scale/category_scale.dart';
 
-class CategoryAxis implements chart.Axis {
+class CategoryAxis extends chart.Axis {
   CategoryAxis({
+    chart.AxisPosition position = chart.AxisPosition.bottom,
     this.scale,
     this.color,
-    this.textStyle = const TextStyle(color: const Color(0xFF000000), fontSize: 10.0)
-  });
+    this.textStyle = const TextStyle(color: const Color(0xFF000000), fontSize: 10.0),
+    this.textAlign = TextAlign.start,
+    this.textDirection = TextDirection.ltr,
+    this.padding = 10.0
+  }): super(position: position);
 
   final CategoryScale scale;
   final Color color;
   final TextStyle textStyle;
+  final TextAlign textAlign;
+  final TextDirection textDirection;
+  final double padding;
 
   @override
   void draw(Canvas canvas, Size size) {
@@ -23,15 +30,14 @@ class CategoryAxis implements chart.Axis {
     for (int i = 0; i < scale.values.length; i++) {
       double dx = scale.scale("", i, size.width);
       TextSpan textSpan = new TextSpan(style: textStyle, text: scale.values[i]);
-      TextPainter textPainter = new TextPainter(text: textSpan,
-        textAlign: TextAlign.start, textDirection: TextDirection.ltr);
+      TextPainter textPainter = new TextPainter(
+        text: textSpan,
+        textAlign: textAlign,
+        textDirection: textDirection
+      );
       textPainter.layout(maxWidth:  itemWidth);
       double textWidth = textPainter.width;
-      textPainter.paint(canvas, new Offset(dx - textWidth / 2.0, size.height));
-
-//      double markX = dx;
-//      double markY = size.height;
-//      canvas.drawLine(new Offset(markX, markY), new Offset(markX, markY - 10), paint);
+      textPainter.paint(canvas, new Offset(dx - textWidth / 2.0, size.height + this.padding));
     }
   }
 }

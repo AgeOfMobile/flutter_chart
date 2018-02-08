@@ -10,7 +10,7 @@ class Legend {
   Legend({ this.label, this.icon });
 }
 
-class DonutChartAxis implements chart.Axis {
+class DonutChartAxis extends chart.Axis {
   final List<Legend> legends;
   final DataSet dataSet;
   final double outerRadius;
@@ -26,7 +26,7 @@ class DonutChartAxis implements chart.Axis {
     this.height,
     this.padding,
     this.outerRadius,
-    this.innerRadius});
+    this.innerRadius}): super(position: chart.AxisPosition.undefined);
 
   @override
   void draw(Canvas canvas, Size size) {

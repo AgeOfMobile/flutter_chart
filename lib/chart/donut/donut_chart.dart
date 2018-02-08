@@ -116,7 +116,8 @@ class _DonutChartPainter extends ChartPainter<DonutChartData> {
 
   @override
   bool shouldRepaint(rendering.CustomPainter oldDelegate) {
-    return true;
+    return oldDelegate == null ||
+      (oldDelegate as _DonutChartPainter).animation.value != this.animation.value;
   }
 
   // Skia (Flutter's drawing library) doesn't support sweepAngle >= 2 * PI so we need to split into 2 arcs
